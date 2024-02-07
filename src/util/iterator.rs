@@ -68,3 +68,54 @@ impl<I:Iterator> LookaheadIterator<I> {
         }
     }
 }
+
+// =============================================================================
+//
+// =============================================================================
+
+/// An iterator which can be "reset" after an arbitrary number of
+/// calls to `next()`.  This is achieved using a
+/// buffer which stores items as they are read.
+pub struct ResetIterator<I>
+where I:Iterator {
+    /// The underlying iterator from which this iterator is based.
+    iter: I,
+    /// Stores items which have been read out of the iterator already.
+    items: Vec<I::Item>,
+    /// Determines offset within original stream.
+    offset: usize
+}
+
+impl<I:Iterator> ResetIterator<I> {
+    /// Construct a lookahead iterator from an arbitrary iterator.
+    pub fn new(iter:I) -> Self { Self{iter, items: Vec::new(), offset:0 } }
+
+    pub fn reset(&mut self, n:usize) {
+        assert!(n >= self.offset);
+        self.offset = self.offset - n;
+    }    
+}
+
+impl<I:Iterator> Iterator for ResetIterator<I>
+where I::Item : Copy {
+    type Item = I::Item;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let i = self.offset;
+        //
+        if self.offset >= self.items.len() {
+            // Pull another item off.
+            match self.iter.next() {
+                Some(v) => {
+                    self.items.push(v);
+                    self.offset += 1;
+                }
+                None => {
+                    return None;
+                }
+            };
+        }
+        //
+        Some(self.items[i])        
+    }
+}

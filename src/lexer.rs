@@ -6,19 +6,19 @@ use crate::scanner::Scanner;
 /// Lexer
 /// =============================================================================
 
-pub struct Lexer<I:Iterator,S:Scanner<I>> {
+pub struct Lexer<I:Iterator,S:Scanner> {
     input: LookaheadIterator<I>,
     rules: S    
 }
 
-impl<I:Iterator,S:Scanner<I>> Lexer<I,S> {
+impl<I:Iterator,S:Scanner> Lexer<I,S> {
     pub fn new(iter: I, rules: S) -> Self {
         let input = LookaheadIterator::new(iter);
         Self{input,rules}
     }
 }
 
-impl<I:Iterator,S:Scanner<I>> Iterator for Lexer<I,S> {
+impl<I:Iterator,S:Scanner<Item=I::Item>> Iterator for Lexer<I,S> {
     type Item = Token<S::Token>;
     
     fn next(&mut self) -> Option<Self::Item> {
