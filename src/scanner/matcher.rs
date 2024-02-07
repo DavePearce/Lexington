@@ -1,5 +1,8 @@
 use crate::util::{ResetIterator};
 
+/// Responsible for matching a certain pattern against a data stream
+/// (e.g. a character stream).  This can be used, for example, for
+/// lexing an input stream into tokens.
 pub trait Matcher : Sized {
     /// Type of items being matched
     type Item;

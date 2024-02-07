@@ -101,21 +101,22 @@ where I::Item : Copy {
     type Item = I::Item;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let i = self.offset;
-        //
         if self.offset >= self.items.len() {
             // Pull another item off.
             match self.iter.next() {
                 Some(v) => {
                     self.items.push(v);
-                    self.offset += 1;
                 }
                 None => {
                     return None;
                 }
             };
         }
-        //
+        // Store old position
+        let i = self.offset;        
+        // Increment position
+        self.offset += 1;                
+        // Done
         Some(self.items[i])        
     }
 }
