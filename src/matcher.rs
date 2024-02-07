@@ -28,7 +28,7 @@ impl<T:PartialEq+Copy> Matcher for T
         match input.next() {
             Some(t) if self == &t => true,
             Some(t) => {
-                input.reset(1);
+                input.backup(1);
                 false
             }
             _ => false
@@ -43,9 +43,9 @@ impl<M:Matcher> Matcher for Many<M> {
     type Item = M::Item;
 
     fn matches<I:Iterator<Item=M::Item>>(&self, input: &mut ResetIterator<I>) -> bool {
-        /// Try the first match        
+        // Try the first match        
         let first = self.0.matches(input);
-        /// Continue whilst more
+        // Continue whilst more
         while self.0.matches(input) {}
         //
         first
@@ -71,7 +71,6 @@ impl<Lhs:Matcher,Rhs:Matcher<Item=Lhs::Item>> Matcher for Or<Lhs,Rhs> {
 #[cfg(test)]
 mod tests {
     use super::{Matcher,ResetIterator};
-    use std::str::Chars;
 
     #[test]
     fn test_01() {
