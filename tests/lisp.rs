@@ -17,6 +17,17 @@ enum SExp<'a> {
     List(Vec<SExp<'a>>)
 }
 
+///
+macro_rules! list{
+    ( $($a:expr),* ) => {
+        {
+            let mut v = Vec::new();
+            $( v.push(SExp::Symbol($a)); )*
+            SExp::List(v)
+        }
+    }
+}
+
 /// Identifiers differents kinds of error.
 #[derive(Debug,PartialEq)]    
 enum ParseError {
@@ -161,27 +172,27 @@ fn lisp_05() {
 
 #[test]
 fn lisp_06() {
-    check_ok("()",List(vec![]));
+    check_ok("()",list![]);
 }
 
 #[test]
 fn lisp_07() {
-    check_ok("(x)",List(vec![Symbol("x")]));
+    check_ok("(x)",list!["x"]);
 }
 
 #[test]
 fn lisp_08() {
-    check_ok("( x)",List(vec![Symbol("x")]));
+    check_ok("( x)",list!["x"]);
 }
 
 #[test]
 fn lisp_09() {
-    check_ok("(x )",List(vec![Symbol("x")]));
+    check_ok("(x )",list!["x"]);
 }
 
 #[test]
 fn lisp_10() {
-    check_ok("(x y)",List(vec![Symbol("x"),Symbol("y")]));
+    check_ok("(x y)",list!["x","y"]);
 }
 
 #[test]
@@ -191,7 +202,7 @@ fn lisp_11() {
 
 #[test]
 fn lisp_12() {
-    check_ok("((x))",List(vec![List(vec![Symbol("x")])]));
+    check_ok("((x))",List(vec![list!["x"]]));
 }
 
 #[test]
